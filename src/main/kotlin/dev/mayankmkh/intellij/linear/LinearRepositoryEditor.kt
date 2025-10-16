@@ -18,7 +18,7 @@ class LinearRepositoryEditor(
 
     init {
         myPasswordLabel.text = "API key:"
-        myUsernameLabel.text = "Team ID:"
+        myUsernameLabel.text = "Team Key:"
 
         myUrlLabel.isVisible = false
         myURLText.isVisible = false
@@ -27,7 +27,7 @@ class LinearRepositoryEditor(
         updateTestButton()
 
         val testUpdateListener =
-            SimpleDocumentListener { e ->
+            SimpleDocumentListener { _ ->
                 myRepository.password = String(myPasswordText.password)
                 myRepository.username = myUserNameText.text
                 updateTestButton()
@@ -39,6 +39,14 @@ class LinearRepositoryEditor(
     override fun createCustomPanel(): JComponent? {
         myWorkspaceLabel = JBLabel("Workspace ID:")
         myWorkspaceText = JTextField(myRepository.workspaceId)
+
+        val workspaceUpdateListener =
+            SimpleDocumentListener { _ ->
+                myRepository.workspaceId = myWorkspaceText.text.trim()
+                updateTestButton()
+            }
+        myWorkspaceText.document.addDocumentListener(workspaceUpdateListener)
+
         installListener(myWorkspaceText)
         return FormBuilder.createFormBuilder()
             .addLabeledComponent(myWorkspaceLabel, myWorkspaceText)

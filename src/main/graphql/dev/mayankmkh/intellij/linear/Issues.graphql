@@ -22,71 +22,83 @@ fragment ShortIssueConnection on IssueConnection {
                 name
             }
         }
-        comments {
-            nodes {
-                body,
-                user {
-                    name
-                },
-                createdAt
-            }
-        }
     }
     ...PageInfoIssueConnection
 }
 
 query Issues($teamId: String!, $count: Int!, $endCursor: String){
     team(id: $teamId) {
-        id
-        name
-
-        issues(first: $count, after: $endCursor, orderBy: updatedAt) {
+        issues(
+            first: $count,
+            after: $endCursor,
+            orderBy: updatedAt
+        ) {
             ...ShortIssueConnection
         }
     }
 }
 
 query SearchIssues($query:String!, $teamId: String!, $count: Int!, $endCursor: String){
-    issueSearch(
-        first: $count,
-        after: $endCursor,
-        orderBy: updatedAt,
-        query: $query,
-        filter: {
-            team: {
-                key: {
-                    eq: $teamId
-                }
+    team(id: $teamId) {
+        issues(
+            first: $count,
+            after: $endCursor,
+            orderBy: updatedAt,
+            filter: {
+                or: [
+                    {
+                        title: {
+                            contains: $query
+                        }
+                    },
+                    {
+                        description: {
+                            contains: $query
+                        }
+                    }
+                ]
             }
+        ) {
+            ...ShortIssueConnection
         }
-    ) {
-        ...ShortIssueConnection
     }
 }
 
 query GetPageInfo($teamId: String!, $offset: Int!, $endCursor: String) {
     team(id: $teamId) {
-        issues(first: $offset, after: $endCursor, orderBy: updatedAt) {
+        issues(
+            first: $offset,
+            after: $endCursor,
+            orderBy: updatedAt
+        ) {
             ...PageInfoIssueConnection
         }
     }
 }
 
 query GetSearchIssuesPageInfo($query:String!, $teamId: String!, $offset: Int!, $endCursor: String) {
-    issueSearch(
-        first: $offset,
-        after: $endCursor,
-        orderBy: updatedAt,
-        query: $query,
-        filter: {
-            team: {
-                key: {
-                    eq: $teamId
-                }
+    team(id: $teamId) {
+        issues(
+            first: $offset,
+            after: $endCursor,
+            orderBy: updatedAt,
+            filter: {
+                or: [
+                    {
+                        title: {
+                            contains: $query
+                        }
+                    },
+                    {
+                        description: {
+                            contains: $query
+                        }
+                    }
+                ]
             }
+        ) {
+            ...PageInfoIssueConnection
         }
-    ) {
-        ...PageInfoIssueConnection
     }
 }
 

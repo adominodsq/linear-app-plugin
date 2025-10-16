@@ -1,10 +1,11 @@
 [versions]
-kotlin = "1.9.21"
+kotlin = "2.0.21"
 changelog = "2.2.0" # https://github.com/JetBrains/gradle-changelog-plugin
-gradleIntelliJPlugin = "1.16.1" # https://github.com/JetBrains/gradle-intellij-plugin
+intellijPlatform = "2.1.0" # https://github.com/JetBrains/intellij-platform-gradle-plugin
 detekt = "1.23.4" # https://detekt.github.io/detekt/gradle.html
 ktlint = "12.0.2" # https://github.com/JLLeitschuh/ktlint-gradle
 apollo3 = "3.8.2" # https://github.com/apollographql/apollo-kotlin
+shadow = "8.1.1" # https://github.com/GradleUp/shadow
 
 [libraries]
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
@@ -13,7 +14,8 @@ apollo-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime",
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
-gradleIntelliJPlugin = { id = "org.jetbrains.intellij", version.ref = "gradleIntelliJPlugin" }
+intellijPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intellijPlatform" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 apollo3 = { id = "com.apollographql.apollo3", version.ref = "apollo3" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

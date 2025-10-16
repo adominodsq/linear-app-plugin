@@ -1,6 +1,19 @@
-query TestConnection($teamId: String!){
-    team(id: $teamId) {
-        id
-        name
+query TestConnection {
+    teams {
+        nodes {
+            id
+            key
+            name
+        }
+    }
+}
+
+query GetTeamByKey {
+    teams {
+        nodes {
+            id
+            key
+            name
+        }
     }
 }

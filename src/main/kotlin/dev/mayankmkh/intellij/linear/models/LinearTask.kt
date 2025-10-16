@@ -4,7 +4,6 @@ import com.intellij.tasks.Comment
 import com.intellij.tasks.Task
 import com.intellij.tasks.TaskRepository
 import com.intellij.tasks.TaskType
-import com.intellij.util.containers.map2Array
 import dev.mayankmkh.intellij.linear.LinearRepository
 import dev.mayankmkh.intellij.linear.apolloGenerated.fragment.ShortIssueConnection
 import icons.LinearPluginIcons
@@ -20,7 +19,7 @@ class LinearTask(private val node: ShortIssueConnection.Node, private val reposi
     override fun getDescription(): String? = node.description
 
     override fun getComments(): Array<Comment> {
-        return node.comments.nodes.map2Array { LinearComment(it) }
+        return emptyArray()
     }
 
     override fun getIcon(): Icon = LinearPluginIcons.Logo

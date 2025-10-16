@@ -17,8 +17,11 @@ import kotlinx.coroutines.runBlocking
 class LinearRepository : NewBaseRepositoryImpl {
     var workspaceId: String = ""
 
-    private val apiKeyProvider = ApiKeyProvider { password }
-    private val remoteDataSource = LinearRemoteDataSource(createApolloClient(API_URL, apiKeyProvider))
+    @Transient
+    private var teamId: String? = null
+
+    private val apiKeyProvider by lazy { ApiKeyProvider { password } }
+    private val remoteDataSource by lazy { LinearRemoteDataSource(createApolloClient(API_URL, apiKeyProvider)) }
 
     /**
      * Serialization constructor
@@ -42,20 +45,30 @@ class LinearRepository : NewBaseRepositoryImpl {
     }
 
     override fun getPresentableName(): String {
-//        return "Linear team: ${getTeamId()}"
+//        return "Linear team: ${getTeamKey()}"
         val name = super.getPresentableName()
-        return name + "/" + workspaceId.ifEmpty { "{workspaceId}" } + "/team/${getTeamId()}"
+        return name + "/" + workspaceId.ifEmpty { "{workspaceId}" } + "/team/${getTeamKey()}"
     }
 
     override fun isConfigured(): Boolean =
-        super.isConfigured() && password.isNotBlank() && getTeamId().isNotBlank() && workspaceId.isNotBlank()
+        super.isConfigured() && password.isNotBlank() && getTeamKey().isNotBlank() && workspaceId.isNotBlank()
 
-    private fun getTeamId() = username
+    private fun getTeamKey() = username
 
     // FIXME: 05/04/21 When we add a task server, getIssues is called with null query and it is called again when task
     //  dialog is opened it already shows previously fetched issues. Now when we click 3 dots to load more issues
     //  getIssues is called again with empty query, 0 offset and limit of 20 which results in no change in list as
     //  its already showing those items. The offset should not be 0 here.
+    private fun getTeamId(): String {
+        if (teamId == null) {
+            teamId =
+                runBlocking {
+                    remoteDataSource.getTeamIdByKey(getTeamKey())
+                }
+        }
+        return teamId!!
+    }
+
     override fun getIssues(
         query: String?,
         offset: Int,
@@ -73,7 +86,7 @@ class LinearRepository : NewBaseRepositoryImpl {
             override fun doTest() {
                 testJob = Job()
                 runBlocking(testJob) {
-                    remoteDataSource.testConnection(getTeamId())
+                    remoteDataSource.testConnection(getTeamKey())
                 }
             }
 

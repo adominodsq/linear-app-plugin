@@ -1,0 +1,19 @@
+<idea-plugin>
+  <idea-version since-build="241" until-build="" />
+  <change-notes />
+  <description><![CDATA[<p>Add Linear.app as Tasks server in your Jetbrains IDE with help of this plugin.</p>
+
+<h3>Configuring Tasks server</h3>
+<ul><li>Navigate to Settings | Tools | Tasks | Servers</li><li>Click on add and select Linear from the dropdown.</li><li>Fill in the details, your <em>TeamId</em> and <em>API Key</em></li><li>Click on <em>Test</em> to validate the settings</li><li>Click Apply</li></ul>]]></description>
+  <version>2.1.8</version>
+  <id>dev.mayankmkh.intellij.linear</id>
+  <name>Linear Tasks</name>
+  <vendor url="https://www.mayankmkh.dev/">mayankmkh</vendor>
+  <!-- Product and plugin compatibility requirements -->
+  <!-- https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.tasks</depends>
+  <extensions defaultExtensionNs="com.intellij.tasks">
+    <repositoryType implementation="dev.mayankmkh.intellij.linear.LinearRepositoryType" />
+  </extensions>
+</idea-plugin>
