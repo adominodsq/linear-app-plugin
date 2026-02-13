@@ -38,7 +38,7 @@ query Issues($teamId: String!, $count: Int!, $endCursor: String){
     }
 }
 
-query SearchIssues($query:String!, $teamId: String!, $count: Int!, $endCursor: String){
+query SearchIssues($query:String!, $teamId: String!, $count: Int!, $endCursor: String, $issueNumber: Float){
     team(id: $teamId) {
         issues(
             first: $count,
@@ -54,6 +54,11 @@ query SearchIssues($query:String!, $teamId: String!, $count: Int!, $endCursor: S
                     {
                         description: {
                             contains: $query
+                        }
+                    },
+                    {
+                        number: {
+                            eq: $issueNumber
                         }
                     }
                 ]
@@ -76,7 +81,7 @@ query GetPageInfo($teamId: String!, $offset: Int!, $endCursor: String) {
     }
 }
 
-query GetSearchIssuesPageInfo($query:String!, $teamId: String!, $offset: Int!, $endCursor: String) {
+query GetSearchIssuesPageInfo($query:String!, $teamId: String!, $offset: Int!, $endCursor: String, $issueNumber: Float) {
     team(id: $teamId) {
         issues(
             first: $offset,
@@ -92,6 +97,11 @@ query GetSearchIssuesPageInfo($query:String!, $teamId: String!, $offset: Int!, $
                     {
                         description: {
                             contains: $query
+                        }
+                    },
+                    {
+                        number: {
+                            eq: $issueNumber
                         }
                     }
                 ]

@@ -57,6 +57,12 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
     }
 
+    // Test dependencies
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.kotlinx.coroutines.test)
+
     intellijPlatform {
         create(properties("platformType"), properties("platformVersion"))
         bundledPlugins(properties("platformPlugins").map { it.split(',').map(String::trim).filter(String::isNotEmpty) })
@@ -179,5 +185,9 @@ tasks {
     composedJar {
         from(configurations["bundle"].map { if (it.isDirectory) it else zipTree(it) })
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }

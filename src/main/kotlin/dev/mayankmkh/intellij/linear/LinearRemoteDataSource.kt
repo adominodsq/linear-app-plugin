@@ -21,7 +21,20 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.logging.Logger
 
+@Suppress("TooManyFunctions")
 class LinearRemoteDataSource(private val apolloClient: ApolloClient) {
+    /**
+     * Extracts the issue number from a query string.
+     * Handles patterns like "ABC-123" or just "123".
+     * Returns null if no number pattern is found.
+     */
+    private fun extractIssueNumber(query: String): Double? {
+        val trimmed = query.trim()
+        // Pattern for identifiers like "DIS-1673" or just "1673"
+        val pattern = Regex("""^(?:[A-Za-z]+-)?(\d+)$""")
+        return pattern.find(trimmed)?.groupValues?.get(1)?.toDoubleOrNull()
+    }
+
     suspend fun getTeamIdByKey(teamKey: String): String =
         withContext(Dispatchers.IO) {
             val response = apolloClient.query(GetTeamByKeyQuery()).execute()
@@ -78,7 +91,8 @@ class LinearRemoteDataSource(private val apolloClient: ApolloClient) {
                 getShortIssueConnection = { it.team?.issues?.shortIssueConnection },
             )
         } else {
-            val pageInfo = if (offset > 0) getSearchIssuesPageInfo(teamId, query, offset) else null
+            val issueNumber = extractIssueNumber(query)
+            val pageInfo = if (offset > 0) getSearchIssuesPageInfo(teamId, query, issueNumber, offset) else null
             getIssuesInternal(
                 limit,
                 pageInfo,
@@ -88,6 +102,7 @@ class LinearRemoteDataSource(private val apolloClient: ApolloClient) {
                         teamId,
                         numberOfItems,
                         endCursor,
+                        Optional.presentIfNotNull(issueNumber),
                     )
                 },
                 getShortIssueConnection = { it.team?.issues?.shortIssueConnection },
@@ -153,6 +168,7 @@ class LinearRemoteDataSource(private val apolloClient: ApolloClient) {
     private suspend fun getSearchIssuesPageInfo(
         teamId: String,
         query: String,
+        issueNumber: Double?,
         offset: Int,
     ): PageInfoIssueConnection.PageInfo? {
         return getPageInfoInternal(
@@ -163,6 +179,7 @@ class LinearRemoteDataSource(private val apolloClient: ApolloClient) {
                     teamId,
                     pageOffset,
                     endCursor,
+                    Optional.presentIfNotNull(issueNumber),
                 )
             },
             getPageInfoIssueConnection = { it.team?.issues?.pageInfoIssueConnection },
